@@ -1,0 +1,3 @@
+{
+  "extends": "@poddify/eslint-config-poddify"
+}
