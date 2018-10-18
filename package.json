@@ -1,6 +1,6 @@
 {
   "name": "@poddify/aws-common",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Utilities for interacting with AWS resources",
   "main": "index.js",
   "directories": {
