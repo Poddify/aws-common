@@ -6,3 +6,4 @@ export default handler => (...args) =>
             return resolve(data);
         });
     });
+
