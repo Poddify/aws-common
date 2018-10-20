@@ -1,4 +1,3 @@
-import doc from 'dynamodb-doc';
 import sinon from 'sinon';
 import proxyquire from 'proxyquire';
 import { expect } from 'chai';
@@ -6,31 +5,36 @@ import { expect } from 'chai';
 const MODULE = '../../../src/dynamodb/put';
 const loadModule = stubs => proxyquire(MODULE, { ...stubs }).default;
 
-describe.skip('Feature: PUT to DynamoDB', () => {
-    afterEach(sinon.restore);
-
-    it('Scenario: puts data to a DynamoDB table', () => {
-        const item = Symbol('data to put');
+describe('Feature: PUT from DynamoDB', () => {
+    it('Scenario: puts data into a DynamoDB table', async () => {
+        const item = Symbol('data to insert');
         const table = Symbol('table to put data into');
+        const expectedResults = Symbol('expected dynamo db put results');
 
-        const promisify = sinon.stub();
-        const promisifiedPut = sinon.stub();
+        const putItemPromiseStub = sinon.stub().resolves(expectedResults);
+        const putItemStub = sinon.stub().returns({
+            promise: putItemPromiseStub
+        });
+        const dynamoMock = {
+            putItem: putItemStub
+        };
 
-        // FIXME:
-        const dynamoDb = sinon.createStubInstance(doc.DynamoDB);
-
-        promisify.withArgs(dynamoDb.putItem).returns(promisifiedPut);
+        const DynamoDB = sinon.stub().returns(dynamoMock);
 
         const put = loadModule({
-            '../util/promisify': promisify
+            'aws-sdk': {
+                DynamoDB
+            }
         });
 
-        put(item, table);
+        const results = await put(item, table);
 
-        expect(promisifiedPut.callCount).to.equal(1);
-        expect(promisifiedPut.firstCall.args).to.deep.equal({
+        expect(results).to.equal(expectedResults);
+        expect(putItemStub.callCount, 'should call putItem').to.equal(1);
+        expect(putItemPromiseStub.callCount, 'should call putItem(..).promise').to.equal(1);
+        expect(putItemStub.firstCall.args).to.deep.equal([{
             TableName: table,
             Item: item
-        });
+        }]);
     });
 });

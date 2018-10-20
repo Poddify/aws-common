@@ -1,10 +1,9 @@
-import doc from 'dynamodb-doc';
-import promisify from '../util/promisify';
+import AWS from 'aws-sdk';
 
-const dynamoDb = new doc.DynamoDB();
+const dynamoDb = new AWS.DynamoDB();
 
 export default (item, table) =>
-    promisify(dynamoDb.getItem)({
+    dynamoDb.getItem({
         TableName: table,
         Key: item
-    });
+    }).promise();
