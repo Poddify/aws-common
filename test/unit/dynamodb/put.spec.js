@@ -22,7 +22,7 @@ describe('Feature: PUT from DynamoDB', () => {
         const DynamoDB = sinon.stub().returns(dynamoMock);
 
         const put = loadModule({
-            'dynamodb-doc': {
+            'aws-sdk': {
                 DynamoDB
             }
         });

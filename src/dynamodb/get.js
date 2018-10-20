@@ -1,6 +1,6 @@
-import doc from 'dynamodb-doc';
+import AWS from 'aws-sdk';
 
-const dynamoDb = new doc.DynamoDB();
+const dynamoDb = new AWS.DynamoDB();
 
 export default (item, table) =>
     dynamoDb.getItem({

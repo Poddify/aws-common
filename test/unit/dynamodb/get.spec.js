@@ -22,7 +22,7 @@ describe('Feature: GET from DynamoDB', () => {
         const DynamoDB = sinon.stub().returns(dynamoMock);
 
         const get = loadModule({
-            'dynamodb-doc': {
+            'aws-sdk': {
                 DynamoDB
             }
         });
