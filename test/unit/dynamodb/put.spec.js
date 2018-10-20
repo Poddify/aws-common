@@ -12,11 +12,11 @@ describe('Feature: PUT from DynamoDB', () => {
         const expectedResults = Symbol('expected dynamo db put results');
 
         const putItemPromiseStub = sinon.stub().resolves(expectedResults);
-        const putItemStub = sinon.stub().returns({
+        const putStub = sinon.stub().returns({
             promise: putItemPromiseStub
         });
         const dynamoMock = {
-            putItem: putItemStub
+            put: putStub
         };
 
         const DocumentClient = sinon.stub().returns(dynamoMock);
@@ -32,9 +32,9 @@ describe('Feature: PUT from DynamoDB', () => {
         const results = await put(item, table);
 
         expect(results).to.equal(expectedResults);
-        expect(putItemStub.callCount, 'should call putItem').to.equal(1);
+        expect(putStub.callCount, 'should call putItem').to.equal(1);
         expect(putItemPromiseStub.callCount, 'should call putItem(..).promise').to.equal(1);
-        expect(putItemStub.firstCall.args).to.deep.equal([{
+        expect(putStub.firstCall.args).to.deep.equal([{
             TableName: table,
             Item: item
         }]);
