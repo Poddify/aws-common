@@ -12,11 +12,11 @@ describe('Feature: GET from DynamoDB', () => {
         const expectedResults = Symbol('expected dynamo db entry');
 
         const getItemPromiseStub = sinon.stub().resolves(expectedResults);
-        const getItemStub = sinon.stub().returns({
+        const getStub = sinon.stub().returns({
             promise: getItemPromiseStub
         });
         const dynamoMock = {
-            getItem: getItemStub
+            get: getStub
         };
 
         const DocumentClient = sinon.stub().returns(dynamoMock);
@@ -32,9 +32,9 @@ describe('Feature: GET from DynamoDB', () => {
         const results = await get(item, table);
 
         expect(results).to.equal(expectedResults);
-        expect(getItemStub.callCount, 'should call getItem').to.equal(1);
+        expect(getStub.callCount, 'should call getItem').to.equal(1);
         expect(getItemPromiseStub.callCount, 'should call getItem(..).promise').to.equal(1);
-        expect(getItemStub.firstCall.args).to.deep.equal([{
+        expect(getStub.firstCall.args).to.deep.equal([{
             TableName: table,
             Key: item
         }]);
