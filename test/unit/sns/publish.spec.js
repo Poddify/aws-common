@@ -1,4 +1,3 @@
-import AWS from 'aws-sdk';
 import sinon from 'sinon';
 import proxyquire from 'proxyquire';
 import { expect } from 'chai';
@@ -6,33 +5,39 @@ import { expect } from 'chai';
 const MODULE = '../../../src/sns/publish';
 const loadModule = stubs => proxyquire(MODULE, { ...stubs }).default;
 
-describe.skip('Feature: publish to SNS topic', () => {
-    afterEach(sinon.restore);
-
-    it('Scenario: publishes data to an SNS topic', () => {
+describe('Feature: Publish to SNS topic', () => {
+    it('Scenario: publish a message + subject to an SNS topic', async () => {
         const topic = Symbol('SNS Topic ARN');
         const subject = Symbol('Message subject');
         const message = Symbol('Message contents');
 
-        const promisify = sinon.stub();
-        const promisifiedPublish = sinon.stub();
+        const expectedResults = Symbol('expected dynamo db entry');
 
-        // FIXME:
-        const SNS = sinon.createStubInstance(AWS.SNS);
+        const publishPromiseStub = sinon.stub().resolves(expectedResults);
+        const publishStub = sinon.stub().returns({
+            promise: publishPromiseStub
+        });
+        const snsMock = {
+            publish: publishStub
+        };
 
-        promisify.withArgs(SNS.publish).returns(promisifiedPublish);
+        const SNS = sinon.stub().returns(snsMock);
 
         const publish = loadModule({
-            '../util/promisify': promisify
+            'aws-sdk': {
+                SNS
+            }
         });
 
-        publish(topic, subject, message);
+        const results = await publish(topic, subject, message);
 
-        expect(promisifiedPublish.callCount).to.equal(1);
-        expect(promisifiedPublish.firstCall.args).to.deep.equal({
+        expect(results).to.equal(expectedResults);
+        expect(publishStub.callCount, 'should call sns.publish').to.equal(1);
+        expect(publishPromiseStub.callCount, 'should call sns.publish(..).promise').to.equal(1);
+        expect(publishStub.firstCall.args).to.deep.equal([{
             TopicArn: topic,
             Subject: subject,
             Message: message
-        });
+        }]);
     });
 });

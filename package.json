@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/Poddify/aws-common#readme",
   "dependencies": {
-    "aws-sdk": "^2.273.1",
+    "aws-sdk": "2.339.0",
     "dynamodb-doc": "^1.0.0"
   },
   "devDependencies": {
