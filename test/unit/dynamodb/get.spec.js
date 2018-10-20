@@ -19,11 +19,13 @@ describe('Feature: GET from DynamoDB', () => {
             getItem: getItemStub
         };
 
-        const DynamoDB = sinon.stub().returns(dynamoMock);
+        const DocumentClient = sinon.stub().returns(dynamoMock);
 
         const get = loadModule({
             'aws-sdk': {
-                DynamoDB
+                DynamoDB: {
+                    DocumentClient
+                }
             }
         });
 
