@@ -1,0 +1,172 @@
+version: 2
+jobs:
+  install:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - checkout
+      - run:
+          name: Configure NPM
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
+      - run:
+          name: Install Dependencies
+          command: npm i
+      - save_cache:
+          name: Cache Source Code
+          key: aws-common-src-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ./index.js
+            - ./
+      - save_cache:
+          name: Cache Dependencies
+          key: aws-common-dependencies-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - node_modules
+
+  verify:
+    working_directory: ~/repo
+    docker:
+    - image: circleci/node:8.10
+    steps:
+      - restore_cache:
+          name: Restore Cached Source Code
+          key: aws-common-src-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          name: Restore Cached Dependencies
+          key: aws-common-dependencies-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Verify Codebase Integrity
+          command: npm run verify
+
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - restore_cache:
+          name: Restore Cached Source Code
+          key: aws-common-src-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          name: Restore Cached Dependencies
+          key: aws-common-dependencies-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Build Code
+          command: npm run build
+      - save_cache:
+          name: Cache Build Artifacts
+          key: aws-common-bin-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - lib
+
+  publish.patch:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - restore_cache:
+          name: Restore Cached Source Code
+          key: aws-common-src-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          name: Restore Cached Dependencies
+          key: aws-common-dependencies-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          name: Restore Cached Build Artifacts
+          key: aws-common-bin-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Create new Patch Version
+          command: npm version patch
+      - run:
+          name: Publish version to Registry
+          command: npm publish
+      - run:
+          name: Push version to Source Control
+          command: git push && git push --tags
+
+  publish.minor:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - restore_cache:
+          name: Restore Cached Source Code
+          key: aws-common-src-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          name: Restore Cached Dependencies
+          key: aws-common-dependencies-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          name: Restore Cached Build Artifacts
+          key: aws-common-bin-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Create new Patch Version
+          command: npm version minor
+      - run:
+          name: Publish version to Registry
+          command: npm publish
+      - run:
+          name: Push version to Source Control
+          command: git push && git push --tags
+
+  publish.major:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:8.10
+    steps:
+      - restore_cache:
+          name: Restore Cached Source Code
+          key: aws-common-src-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          name: Restore Cached Dependencies
+          key: aws-common-dependencies-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - restore_cache:
+          name: Restore Cached Build Artifacts
+          key: aws-common-bin-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
+      - run:
+          name: Create new Patch Version
+          command: npm version major
+      - run:
+          name: Publish version to Registry
+          command: npm publish
+      - run:
+          name: Push version to Source Control
+          command: git push && git push --tags
+
+workflows:
+  version: 2
+  pipeline:
+    jobs:
+      - install:
+          context: NPM Context
+      - build:
+          requires:
+            - install
+      - verify:
+          requires:
+            - install
+      - publish.patch:
+          type: approval
+          context: NPM Context
+          requires:
+            - verify
+            - build
+          filters:
+            branches:
+              only: master
+      - publish.minor:
+          type: approval
+          context: NPM Context
+          requires:
+            - verify
+            - build
+          filters:
+            branches:
+              only: master
+      - publish.major:
+          type: approval
+          context: NPM Context
+          requires:
+            - verify
+            - build
+          filters:
+            branches:
+              only: master
