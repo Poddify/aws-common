@@ -144,7 +144,7 @@ workflows:
   version: 2
   pipeline:
     jobs:
-      - install:
+      - install
       - build:
           requires:
             - install
