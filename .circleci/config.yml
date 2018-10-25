@@ -64,6 +64,9 @@ jobs:
     docker:
       - image: circleci/node:8.10
     steps:
+      - run:
+          name: Configure NPM
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
       - restore_cache:
           name: Restore Cached Source Code
           key: aws-common-src-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -88,6 +91,9 @@ jobs:
     docker:
       - image: circleci/node:8.10
     steps:
+      - run:
+          name: Configure NPM
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
       - restore_cache:
           name: Restore Cached Source Code
           key: aws-common-src-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
@@ -112,6 +118,9 @@ jobs:
     docker:
       - image: circleci/node:8.10
     steps:
+      - run:
+          name: Configure NPM
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
       - restore_cache:
           name: Restore Cached Source Code
           key: aws-common-src-{{ .Environment.CIRCLE_BRANCH }}-{{ .Environment.CIRCLE_SHA1 }}
