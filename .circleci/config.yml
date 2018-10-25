@@ -145,7 +145,6 @@ workflows:
   pipeline:
     jobs:
       - install:
-          context: NPM Context
       - build:
           requires:
             - install
@@ -154,7 +153,6 @@ workflows:
             - install
       - publish.patch:
           type: approval
-          context: NPM Context
           requires:
             - verify
             - build
@@ -163,7 +161,6 @@ workflows:
               only: master
       - publish.minor:
           type: approval
-          context: NPM Context
           requires:
             - verify
             - build
@@ -172,7 +169,6 @@ workflows:
               only: master
       - publish.major:
           type: approval
-          context: NPM Context
           requires:
             - verify
             - build
