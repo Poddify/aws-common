@@ -151,27 +151,33 @@ workflows:
       - verify:
           requires:
             - install
-      - publish.patch:
+      - publish.patch.approval:
           type: approval
+      - publish.minor.approval:
+          type: approval
+      - publish.major.approval:
+          type: approval
+      - publish.patch:
           requires:
             - verify
             - build
+            - publish.patch.approval
           filters:
             branches:
               only: master
       - publish.minor:
-          type: approval
           requires:
             - verify
             - build
+            - publish.minor.approval
           filters:
             branches:
               only: master
       - publish.major:
-          type: approval
           requires:
             - verify
             - build
+            - publish.major.approval
           filters:
             branches:
               only: master
