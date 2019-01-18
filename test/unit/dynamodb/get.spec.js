@@ -11,7 +11,9 @@ describe('Feature: GET from DynamoDB', () => {
         const table = Symbol('table to get data from');
         const expectedResults = Symbol('expected dynamo db entry');
 
-        const getItemPromiseStub = sinon.stub().resolves(expectedResults);
+        const getItemPromiseStub = sinon.stub().resolves({
+            Item: expectedResults
+        });
         const getStub = sinon.stub().returns({
             promise: getItemPromiseStub
         });
