@@ -77,11 +77,6 @@ describe('Feature: Query data from DynamoDB', () => {
                 }
             }]);
         });
-
-        it('gets the DynamoDB client with the default configuration', () => {
-            expect(getClient.callCount).to.equal(1);
-            expect(getClient.firstCall.args).to.deep.equal([{}]);
-        });
     });
 
     describe('custom config', () => {
