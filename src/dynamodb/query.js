@@ -14,7 +14,7 @@ function getExpressionAttributeValues(item) {
                  }), {});
 }
 
-export default async function (indexName, item, table, config = {}) {
+export default async function (indexName, item, table, config) {
     const dynamoDb = getDynamoClient(config);
     const results = await dynamoDb.query({
         TableName: table,
