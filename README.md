@@ -58,7 +58,7 @@ await dynamodb.put({
 
 #### `get(record, table, config)`
 
-Gets a unique record that matches a given `index` : `value`
+Gets a unique record that matches a given `index` : `value` on the default index
 
 ```js
 import { dynamodb } from '@poddify/aws-common';
@@ -66,4 +66,17 @@ import { dynamodb } from '@poddify/aws-common';
 const value = await dynamodb.get({
     'my-index': indexValue
 }, DYNAMO_DB_TABLE);
+```
+
+### `query(index, query, table, config)`
+
+Gets a set of records that match the `query` object when compared against a specific Index
+
+```js
+import { dynamodb } from '@poddify/aws-common';
+
+const results = await dynamodb.query('myIndex', {
+    hashKey: hashValue,
+    sortKey: sortValue
+}, DYNAMO_DB_TABLE)
 ```
