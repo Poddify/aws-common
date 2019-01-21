@@ -32,7 +32,18 @@ await sns.publish(TOPIC_ARN, 'some subject', 'a message');
 
 ### DynamoDB
 
-#### `put(item, table)`
+All DynamoDB methods expose an optional `config` parameter. This `config` parameter maps directly to the AWS DynamoDB configuration document by the parent SDK:
+
+```js
+const config = {
+    region: 'us-east-1',
+    endpoint: 'http://localhost:8000' // for local development
+    accessKeyId: 'Keep this secret',
+    secretAccessKey: 'DEFINITELY keep this secret'
+};
+```
+
+#### `put(item, table, config)`
 
 Performs an update to an existing DynamoDB record (if indices match) or creates a new record if an existing record is not found.
 
@@ -45,7 +56,7 @@ await dynamodb.put({
 }, DYNAMO_DB_TABLE);
 ```
 
-#### `get(record, table)`
+#### `get(record, table, config)`
 
 Gets a unique record that matches a given `index` : `value`
 
