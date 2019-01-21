@@ -1,6 +1,4 @@
-import AWS from 'aws-sdk';
-
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+import { get as getDynamoClient } from './client-factory';
 
 function getKeyConditionExpression(item) {
     return Object.keys(item)
@@ -16,7 +14,8 @@ function getExpressionAttributeValues(item) {
                  }), {});
 }
 
-export default async function (indexName, item, table) {
+export default async function (indexName, item, table, config = {}) {
+    const dynamoDb = getDynamoClient(config);
     const results = await dynamoDb.query({
         TableName: table,
         Select: 'ALL_ATTRIBUTES',

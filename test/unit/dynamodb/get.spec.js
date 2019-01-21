@@ -17,17 +17,13 @@ describe('Feature: GET from DynamoDB', () => {
         const getStub = sinon.stub().returns({
             promise: getItemPromiseStub
         });
-        const dynamoMock = {
+        const getClientStub = sinon.stub().returns({
             get: getStub
-        };
-
-        const DocumentClient = sinon.stub().returns(dynamoMock);
+        });
 
         const get = loadModule({
-            'aws-sdk': {
-                DynamoDB: {
-                    DocumentClient
-                }
+            './client-factory': {
+                get: getClientStub
             }
         });
 
