@@ -35,7 +35,7 @@
     "aws-sdk": "2.339.0"
   },
   "devDependencies": {
-    "@poddify/eslint-config-poddify": "^1.0.1",
+    "@poddify/eslint-config-poddify": "1.1.0",
     "babel-cli": "^6.26.0",
     "babel-plugin-istanbul": "^4.1.4",
     "babel-plugin-transform-regenerator": "^6.24.1",

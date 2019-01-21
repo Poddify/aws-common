@@ -19,13 +19,11 @@ describe('Feature: PUT from DynamoDB', () => {
             put: putStub
         };
 
-        const DocumentClient = sinon.stub().returns(dynamoMock);
+        const getClientStub = sinon.stub().returns(dynamoMock);
 
         const put = loadModule({
-            'aws-sdk': {
-                DynamoDB: {
-                    DocumentClient
-                }
+            './client-factory': {
+                get: getClientStub
             }
         });
 

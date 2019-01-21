@@ -1,9 +1,10 @@
-import AWS from 'aws-sdk';
+import { get as getDynamoClient } from './client-factory';
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
+export default (item, table, config) => {
+    const dynamoDb = getDynamoClient(config);
 
-export default (item, table) =>
-    dynamoDb.put({
+    return dynamoDb.put({
         TableName: table,
         Item: item
     }).promise();
+};

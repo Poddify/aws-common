@@ -1,8 +1,7 @@
-import AWS from 'aws-sdk';
+import { get as getDynamoClient } from './client-factory';
 
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
-
-export default async function (item, table) {
+export default async function (item, table, config) {
+    const dynamoDb = getDynamoClient(config);
     const results = await dynamoDb.get({
         TableName: table,
         Key: item
