@@ -1,3 +1,9 @@
+<p align="center">
+:warning: This dependency is deprecated :warning:
+</p>
+
+Using AWS SDKs directly isn't that difficult, and adding another layer of abstraction is unnecessary. This hasn't been updated in years, so 🤷‍♀️ if you _really_ want this, feel free to fork. 
+
 # @poddify/aws-common
 
 Utilities for interacting with AWS resources
